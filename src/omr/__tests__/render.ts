@@ -132,12 +132,13 @@ export function chord(c: Canvas, s: StaffSpec, steps: number[], x: number, value
     ellipse(c, x, bottom - (step * s.space) / 2, rx, ry, value <= 1)
   }
   if (value >= 4) return
-  const top = Math.min(...steps)
-  const up = top < 4
+  // One stem spanning the whole chord: from the head at the near end, past the head
+  // at the far end, and on for three and a bit spaces.
+  const up = Math.min(...steps) < 4
   const stemW = Math.max(2, Math.round(s.space * 0.14))
-  const anchor = up ? Math.max(...steps) : Math.min(...steps)
-  const far = up ? Math.min(...steps) : Math.max(...steps)
-  const y0 = bottom - (anchor * s.space) / 2
+  const near = up ? Math.min(...steps) : Math.max(...steps)
+  const far = up ? Math.max(...steps) : Math.min(...steps)
+  const y0 = bottom - (near * s.space) / 2
   const y1 = bottom - (far * s.space) / 2 + (up ? -s.space * 3.3 : s.space * 3.3)
   rect(c, up ? x + rx - stemW : x - rx, Math.min(y0, y1), stemW, Math.abs(y1 - y0))
 }

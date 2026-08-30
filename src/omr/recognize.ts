@@ -30,11 +30,26 @@ export interface RecognizeResult {
   preview: { data: Uint8ClampedArray; width: number; height: number }
 }
 
+interface HeadReading {
+  hit: NoteheadHit
+  midi: number
+  diatonic: number
+  explicitAlter: number | null
+  duration: number
+}
+
 interface Event {
   x: number
   duration: number
   /** Empty for a rest. */
-  heads: { midi: number; confidence: number; cx: number; cy: number }[]
+  heads: {
+    midi: number
+    confidence: number
+    cx: number
+    cy: number
+    diatonic: number
+    explicitAlter: number | null
+  }[]
 }
 
 let nextId = 0
@@ -89,7 +104,7 @@ function blobsForStaff(blobs: Blob[], staves: Staff[], index: number, S: number)
 
 /** Group heads that share an onset (a chord) and interleave the rests. */
 function buildEvents(
-  heads: { hit: NoteheadHit; midi: number; duration: number }[],
+  heads: HeadReading[],
   rests: { cx: number; base: number }[],
   S: number,
 ): Event[] {
@@ -112,6 +127,8 @@ function buildEvents(
         confidence: g.hit.score,
         cx: g.hit.cx,
         cy: g.hit.cy,
+        diatonic: g.diatonic,
+        explicitAlter: g.explicitAlter,
       })),
     })
     i = j
@@ -208,7 +225,7 @@ export function recognize(image: ImageData, options: RecognizeOptions = {}): Rec
       measuresInSystem = Math.max(measuresInSystem, barlines.length + 1)
 
       const used = new Set<number>()
-      const heads: { hit: NoteheadHit; midi: number; duration: number }[] = []
+      const heads: HeadReading[] = []
       const bottomDiatonic = CLEF_BOTTOM_LINE[clef as ClefType]
 
       for (const blob of mine) {
@@ -235,6 +252,8 @@ export function recognize(image: ImageData, options: RecognizeOptions = {}): Rec
           heads.push({
             hit,
             midi,
+            diatonic,
+            explicitAlter: explicit === null ? null : alter,
             duration: rhythm.base * (rhythm.dotted ? 1.5 : 1),
           })
         }
@@ -263,6 +282,8 @@ export function recognize(image: ImageData, options: RecognizeOptions = {}): Rec
               hand,
               confidence: head.confidence,
               measure: measureIndex,
+              diatonic: head.diatonic,
+              explicitAlter: head.explicitAlter,
             })
             scores.push(head.confidence)
             detections.push({

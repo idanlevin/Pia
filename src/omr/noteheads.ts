@@ -27,6 +27,13 @@ export interface HeadRhythm {
  * between the outer and inner windows rather than the whole window means a filled
  * head and a hollow one both read near 1.0 — the hole in a half note stops being a
  * penalty — while a stem, a barline or a stray speck stays far below.
+ *
+ * On its own that is not enough. In a chord of stacked thirds the heads touch, and the
+ * solid patch *between* two of them scores at least as well as the heads do — it has
+ * no hole to dock marks for. What separates them is width: a notehead is at its widest
+ * across its middle, while the junction of two heads is only the tips of two ellipses.
+ * So a candidate that reads as solid has to be a notehead's width across, which also
+ * rules out the other solid thing on the page, a beam, from the far side.
  */
 export function findNoteheads(blob: Blob, S: number, yMin: number, yMax: number): NoteheadHit[] {
   const ow = Math.max(3, Math.round(S * 0.95))
@@ -66,18 +73,19 @@ export function findNoteheads(blob: Blob, S: number, yMin: number, yMax: number)
       }
     }
     if (clash) continue
-    if (c.filled ? !passesBeamTest(c, S) : !hasClosedRim(c, S)) continue
+    if (c.filled ? !isNoteheadWide(c, S) : !hasClosedRim(c, S)) continue
     kept.push(c)
   }
   return kept
 }
 
 /**
- * A beam is solid and long; a notehead is solid and short. Measuring how far the
- * ink continues sideways at head height separates them. Only filled candidates need
- * this — nothing that reads as hollow is ever part of a beam.
+ * How far solid ink runs sideways at head height, which has to be about a notehead's
+ * width. Too narrow and the candidate is the junction between two stacked heads in a
+ * chord; too wide and it is a beam. Only candidates that read as solid are asked —
+ * a hollow head has its hole across this line and would measure nothing.
  */
-function passesBeamTest(hit: NoteheadHit, S: number): boolean {
+function isNoteheadWide(hit: NoteheadHit, S: number): boolean {
   const band = Math.max(1, Math.round(S * 0.5))
   const limit = Math.round(S * 2.3)
   let extent = 1
@@ -90,7 +98,7 @@ function passesBeamTest(hit: NoteheadHit, S: number): boolean {
     if (fillRatio(hit.blob, hit.cx - d, hit.cy, 1, band) < 0.6) break
     extent++
   }
-  return extent <= S * 2.0
+  return extent >= S * 0.85 && extent <= S * 2.0
 }
 
 /**

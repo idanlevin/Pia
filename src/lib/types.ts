@@ -17,6 +17,10 @@ export interface Note {
   confidence: number
   /** Index into Score.measures, or -1 when no barlines were found. */
   measure: number
+  /** Staff position as a diatonic index, kept so a change of key can be re-applied. */
+  diatonic?: number
+  /** Alteration written beside the note, if any. Null means "whatever the key says". */
+  explicitAlter?: number | null
 }
 
 export interface KeySignature {

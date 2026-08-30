@@ -40,7 +40,7 @@ five seconds, with no account, no upload, and no app store.
 - Grand-staff (two-hand) and single-staff scores; multiple systems per page.
 - Playback through a synthesized piano with pedal-free sustain and reverb.
 - Practice tools: tempo 25–200%, A/B loop, count-in, hands-separate, metronome.
-- An 88-key keyboard that lights up in time, plus a piano-roll editor for corrections.
+- A keyboard that lights up in time, plus a piano-roll editor for corrections.
 - A local library of scanned pieces (localStorage), export to MIDI.
 
 ### Out of scope (v1)
@@ -69,7 +69,7 @@ Nothing is gated. No sign-in, no paywall, no onboarding carousel.
 | C1 | **Scan** | Rear camera at max resolution, framing guide, torch toggle, tap-to-capture. Falls back to file picker on desktop or when camera access is denied. |
 | C2 | **Recognize** | Runs entirely in a Web Worker. Reports per-stage progress and a confidence score. |
 | C3 | **Play** | Additive-synthesis piano with inharmonic partials, hammer transient, per-partial decay, and a generated convolution reverb. |
-| C4 | **Follow** | 88-key keyboard highlights sounding notes; piano roll scrolls with a playhead; the source photo shows detection boxes so you can see what was read. |
+| C4 | **Follow** | A keyboard fitted to the piece's own range — 88 keys on a phone is 5 px each — highlights sounding notes; the piano roll scrolls with a playhead; the source photo shows detection boxes so you can see what was read. |
 | C5 | **Practice** | Tempo slider (25–200%), A/B loop by measure, count-in, metronome, mute left/right hand. |
 | C6 | **Correct** | Piano-roll editing: select, nudge pitch, change length, delete, add. Global key signature, time signature and clef overrides. |
 | C7 | **Keep** | Pieces persist in localStorage with a thumbnail. Export to a standard MIDI file. |
@@ -128,8 +128,10 @@ accent for interactive controls. No skeuomorphic wood.
   tempo/measure readouts.
 - **Motion:** only where it carries information — the playhead, key highlights, the
   analysing progress. Nothing decorative that runs while music plays.
-- **Colour as data:** amber = sounding, cyan = selected/editable, grey = idle. Left and
-  right hand differ in lightness, not hue, so they stay distinguishable when colour-blind.
+- **Colour as data:** amber = the app is sounding this now, sky = yours to act on —
+  a selected note, or a key in a hand you have muted for hands-separate practice —
+  grey = idle. Left and right hand differ in lightness within each colour, not hue, so
+  they stay distinguishable when colour-blind.
 - **Accessibility:** full keyboard control of the transport (space = play/pause), visible
   focus rings, `prefers-reduced-motion` respected, all controls ≥44 px on touch.
 

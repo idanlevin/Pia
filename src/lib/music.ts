@@ -29,6 +29,15 @@ export function midiToName(midi: number, preferFlats = false): string {
   return `${names[((midi % 12) + 12) % 12]}${octave}`
 }
 
+/** Parse a note name like "C4", "F#3" or "Bb5" into a MIDI number. */
+export function nameToMidi(name: string): number {
+  const m = /^([A-Ga-g])([#b]?)(-?\d+)$/.exec(name.trim())
+  if (!m) throw new Error(`not a note name: ${name}`)
+  const letter = LETTERS.indexOf(m[1].toUpperCase())
+  const alter = m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0
+  return 12 * (Number(m[3]) + 1) + SEMITONE_OF_LETTER[letter] + alter
+}
+
 export function midiToFreq(midi: number): number {
   return 440 * Math.pow(2, (midi - 69) / 12)
 }
