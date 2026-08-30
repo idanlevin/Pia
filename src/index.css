@@ -1,0 +1,100 @@
+@import 'tailwindcss';
+
+/*
+ * A dark instrument panel rather than a worksheet. Two accents carry meaning and
+ * nothing else does: amber is sound happening now, sky is something you can act on.
+ */
+@theme {
+  --color-ink-950: #08090c;
+  --color-ink-900: #0d0f14;
+  --color-ink-850: #12151b;
+  --color-ink-800: #181c24;
+  --color-ink-700: #232833;
+  --color-ink-600: #333a48;
+  --color-ink-400: #737c8c;
+  --color-ink-300: #9aa3b2;
+  --color-ink-100: #e6e9ef;
+
+  --color-glow-400: #fbbf24;
+  --color-glow-500: #f59e0b;
+  --color-glow-300: #fcd34d;
+
+  --color-sky-ui: #38bdf8;
+  --color-sky-dim: #0d5a75;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink-950);
+  color: var(--color-ink-100);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* Readouts that change every frame must not reflow the layout around them. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-sky-ui);
+  outline-offset: 2px;
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 44px;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-ink-700);
+}
+input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-ink-700);
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -9px;
+  border-radius: 999px;
+  background: var(--color-ink-100);
+  border: 2px solid var(--color-ink-900);
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.5);
+}
+input[type='range']::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--color-ink-100);
+  border: 2px solid var(--color-ink-900);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

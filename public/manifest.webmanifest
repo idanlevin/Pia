@@ -1,0 +1,19 @@
+{
+  "name": "Pia — scan sheet music, hear it play",
+  "short_name": "Pia",
+  "description": "Point your phone at piano music and hear it played back.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08090c",
+  "theme_color": "#08090c",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
