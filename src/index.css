@@ -25,6 +25,15 @@
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
+/*
+ * The app commits to one dark world rather than following the viewer's theme, so it
+ * says so: without this, native controls -- the key-signature menu, the tempo field,
+ * scrollbars -- are drawn light by the host and sit wrongly inside a dark panel.
+ */
+:root {
+  color-scheme: dark;
+}
+
 html,
 body,
 #root {

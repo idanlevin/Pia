@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Player, soundingAt } from './audio/player'
+import { canSaveFiles, saveFile } from './lib/download'
 import { toMidiFile } from './lib/midi'
 import { addNote, nudgePitch, pitchRange, rekey, removeNote, updateNote } from './lib/score'
 import { deletePiece, loadLibrary, savePiece } from './lib/storage'
 import type { Score, StoredPiece } from './lib/types'
+import OmrWorker from './omr/worker?worker&inline'
 import type { WorkerRequest, WorkerResponse } from './omr/worker'
 import { Home } from './ui/Home'
 import { Keyboard, type KeyState } from './ui/Keyboard'
@@ -116,7 +118,8 @@ export default function App() {
     setProgress({ stage: 'Starting', fraction: 0 })
 
     workerRef.current?.terminate()
-    const worker = new Worker(new URL('./omr/worker.ts', import.meta.url), { type: 'module' })
+    // Inlined rather than fetched, so the app also runs from a single HTML file.
+    const worker = new OmrWorker()
     workerRef.current = worker
 
     worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
@@ -211,6 +214,7 @@ export default function App() {
   }, [screen, toggle, leave])
 
   const range = useMemo(() => (score ? pitchRange(score) : { low: 48, high: 72 }), [score])
+  const canExport = useMemo(() => canSaveFiles(), [])
   const selectedNote = score?.notes.find((n) => n.id === selected) ?? null
 
   const edit = (next: Score) => {
@@ -227,12 +231,7 @@ export default function App() {
 
   const exportMidi = () => {
     if (!score) return
-    const url = URL.createObjectURL(toMidiFile(score))
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${score.title.replace(/\W+/g, '-').toLowerCase()}.mid`
-    link.click()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    saveFile(`${score.title.replace(/\W+/g, '-').toLowerCase()}.mid`, toMidiFile(score))
   }
 
   if (screen === 'camera') {
@@ -276,12 +275,14 @@ export default function App() {
               {saved ? 'Saved' : 'Save'}
             </button>
           )}
-          <button
-            onClick={exportMidi}
-            className="min-h-11 rounded-full bg-ink-850 px-4 text-sm text-ink-300"
-          >
-            MIDI
-          </button>
+          {canExport && (
+            <button
+              onClick={exportMidi}
+              className="min-h-11 rounded-full bg-ink-850 px-4 text-sm text-ink-300"
+            >
+              MIDI
+            </button>
+          )}
         </header>
 
         <nav className="flex gap-1 px-4 pb-3" role="tablist">

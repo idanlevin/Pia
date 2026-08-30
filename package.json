@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "fixture": "esbuild src/omr/__tests__/render.ts --format=esm --outfile=.fixtures/render.js && node scripts/make-fixture.mjs",
-    "drive": "node scripts/drive.mjs"
+    "drive": "node scripts/drive.mjs",
+    "pack": "vite build && node scripts/pack-artifact.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",
